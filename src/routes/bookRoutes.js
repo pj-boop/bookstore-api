@@ -13,8 +13,17 @@ router.post("/", protectRoute, async (req, res) => {
       return res.status(400).json({ message: "Please provide all fields" });
     }
 
+    if (!image.startsWith("data:image/")) {
+      return res.status(400).json({
+       message: "Invalid image format",
+    });
+    }
+
     // upload the image to cloudinary
-    const uploadResponse = await cloudinary.uploader.upload(image);
+    const uploadResponse = await cloudinary.uploader.upload(image, {
+      folder: "books",
+      resource_type: "image",
+      });
     const imageUrl = uploadResponse.secure_url;
 
     // save to the database
